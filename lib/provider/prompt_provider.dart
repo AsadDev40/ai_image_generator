@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ai_app/feature/prompt/service/prompt_service.dart';
+import 'package:ai_app/service/prompt_service.dart';
 
 class PromptProvider extends ChangeNotifier {
   bool _isLoading = false;

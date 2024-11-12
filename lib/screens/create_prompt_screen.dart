@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:ai_app/feature/prompt/provider/prompt_provider.dart';
+import 'package:ai_app/provider/prompt_provider.dart';
 import 'package:ai_app/widgets/app_bar.dart';
 import 'package:ai_app/widgets/custom_textfield.dart';
 import 'package:ai_app/widgets/drawer.dart';

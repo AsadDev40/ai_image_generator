@@ -1,4 +1,4 @@
-import 'package:ai_app/feature/prompt/ui/chat_history.dart';
+import 'package:ai_app/screens/chat_history.dart';
 import 'package:ai_app/utils/utils.dart';
 import 'package:flutter/material.dart';
 

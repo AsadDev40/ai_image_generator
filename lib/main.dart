@@ -1,5 +1,5 @@
-import 'package:ai_app/feature/prompt/service/app_provider.dart';
-import 'package:ai_app/feature/prompt/ui/create_prompt_screen.dart';
+import 'package:ai_app/service/app_provider.dart';
+import 'package:ai_app/screens/create_prompt_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {

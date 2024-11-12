@@ -43,4 +43,3 @@ class Promptservice {
     return null;
   }
 }
-//Generate a Disney image of a princess with a prince
