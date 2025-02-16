@@ -37,7 +37,7 @@ class DrawerWidget extends StatelessWidget {
             leading: const Icon(Icons.history),
             title: const Text('Conversation History'),
             onTap: () {
-              Utils.navigateTo(context, ChatHistoryPage());
+              Utils.navigateTo(context, const ChatHistoryPage());
               // Navigate to conversation history
             },
           ),

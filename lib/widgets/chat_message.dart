@@ -30,7 +30,7 @@ class ChatMessageWidget extends StatelessWidget {
               bottomLeft: const Radius.circular(15),
               bottomRight: const Radius.circular(15),
             ),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: Colors.black12,
                 blurRadius: 5,

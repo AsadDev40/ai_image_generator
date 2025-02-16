@@ -1,5 +1,10 @@
+import 'package:ai_app/screens/image_view.dart';
+import 'package:ai_app/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
+import 'dart:typed_data';
 import 'package:ai_app/provider/prompt_provider.dart';
 import 'package:ai_app/widgets/app_bar.dart';
 import 'package:ai_app/widgets/custom_textfield.dart';
@@ -7,6 +12,30 @@ import 'package:ai_app/widgets/drawer.dart';
 
 class CreatePromptScreen extends StatelessWidget {
   const CreatePromptScreen({super.key});
+
+  Future<void> _downloadImage(Uint8List imageBytes) async {
+    final status = await Permission.storage.request();
+    if (status.isGranted) {
+      try {
+        final result = await ImageGallerySaverPlus.saveImage(
+          imageBytes,
+          quality: 100,
+          name: 'generated_image',
+        );
+        if (result['isSuccess'] == true) {
+          Utils.showToast('Image saved successfully to gallery');
+          debugPrint('Image saved successfully to gallery.');
+        } else {
+          Utils.showToast('Failed to save image to gallery');
+          debugPrint('Failed to save image to gallery.');
+        }
+      } catch (e) {
+        debugPrint('Error saving image: $e');
+      }
+    } else {
+      debugPrint('Storage permission denied.');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,51 +54,65 @@ class CreatePromptScreen extends StatelessWidget {
 
           return Column(
             children: [
-              // Display prompts and generated images as a scrollable list
               Expanded(
                 child: ListView.builder(
-                  itemCount:
-                      provider.chatHistory.length, // Count the prompts only
+                  itemCount: provider.chatHistory.length,
                   itemBuilder: (context, index) {
                     return Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          // User Prompt
-
-                          // Space between prompt and image
-                          // Generated Image
                           Row(
-                            mainAxisAlignment:
-                                MainAxisAlignment.end, // Align to the right
+                            mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              // Display generated image if exists
                               if (provider.imageHistory.isNotEmpty)
-                                Container(
-                                  width: 250,
-                                  height: 200,
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: MemoryImage(
-                                          provider.imageHistory[index]),
-                                      fit: BoxFit.cover,
+                                Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) =>
+                                                FullScreenImage(
+                                              imageBytes:
+                                                  provider.imageHistory[index],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        width: 250,
+                                        height: 200,
+                                        decoration: BoxDecoration(
+                                          image: DecorationImage(
+                                            image: MemoryImage(
+                                                provider.imageHistory[index]),
+                                            fit: BoxFit.cover,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                      ),
                                     ),
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
+                                    const SizedBox(height: 8),
+                                    IconButton(
+                                      icon: const Icon(Icons.download),
+                                      color: Colors.black,
+                                      onPressed: () => _downloadImage(
+                                          provider.imageHistory[index]),
+                                    ),
+                                  ],
                                 ),
                             ],
                           ),
                           const SizedBox(height: 8),
-
                           Row(
                             children: [
-                              // User prompt text
                               Container(
-                                constraints: BoxConstraints(
-                                  maxWidth:
-                                      250, // Adjust the maximum width as needed
-                                ),
+                                constraints:
+                                    const BoxConstraints(maxWidth: 250),
                                 padding: const EdgeInsets.all(12),
                                 decoration: BoxDecoration(
                                   color: Colors.grey.shade200,
@@ -78,28 +121,25 @@ class CreatePromptScreen extends StatelessWidget {
                                 child: Text(
                                   provider.chatHistory[index],
                                   style: const TextStyle(color: Colors.black),
-                                  overflow: TextOverflow
-                                      .visible, // Allow text to wrap
+                                  overflow: TextOverflow.visible,
                                 ),
                               ),
                             ],
-                          )
+                          ),
                         ],
                       ),
                     );
                   },
                 ),
               ),
-              // Text input and generate button always at the bottom
               Padding(
                 padding: const EdgeInsets.all(24.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // CustomTextField inside Expanded
                     Expanded(
                       child: CustomTextField(
-                        textStyle: TextStyle(color: Colors.black),
+                        textStyle: const TextStyle(color: Colors.black),
                         controller: provider.promptController,
                         hintText: 'Enter Prompt here',
                         enableBorder: true,
@@ -107,9 +147,7 @@ class CreatePromptScreen extends StatelessWidget {
                         textAndIconColor: Colors.black,
                       ),
                     ),
-                    const SizedBox(
-                        width: 12), // Spacing between text field and button
-                    // Icon button for generating image
+                    const SizedBox(width: 12),
                     IconButton(
                       onPressed: () {
                         if (provider.promptController.text.isNotEmpty) {
